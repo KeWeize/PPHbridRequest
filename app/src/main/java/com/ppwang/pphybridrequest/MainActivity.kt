@@ -1,6 +1,7 @@
 package com.ppwang.pphybridrequest
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +10,7 @@ import com.ppwang.pphybridrequest.api.MainHomeApi
 import com.ppwang.pphybridrequest.api.core.Cmd
 import com.ppwang.pphybridrequest.api.core.JavaPath
 import com.ppwang.pphybridrequest.bean.BannerItem
+import com.ppwang.pprequest.core.PPJsonBody
 import com.ppwang.pprequest.core.PPHtybridValue
 import com.ppwang.pprequest.core.PPRequest
 import com.ppwang.pprequest.interfaces.IPPApiListener
@@ -40,7 +42,14 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-            })
+            }
+        )
+
+
+        val bean = BannerApiBean(5, 6)
+        bean.setPointer(Pointer(50, 50))
+        Log.d("MainActivity", bean.generateJson())
+
     }
 
     /**
@@ -52,6 +61,41 @@ class MainActivity : AppCompatActivity() {
         // 豆腐块
         val phpParam = MainHomeApi.createCmd50206()
         return PPHtybridValue(bannerParam, phpParam)
+    }
+
+    /**
+     * 请求参数
+     */
+    class BannerApiBean : PPJsonBody {
+
+        private var page: Int
+
+        private var pageSize: Int
+
+        private var mPointer: Pointer? = null
+
+        constructor(page: Int, pageSize: Int) : super() {
+            this.page = page
+            this.pageSize = pageSize
+        }
+
+        fun setPointer(pointer: Pointer) {
+            this.mPointer = pointer
+        }
+
+    }
+
+    class Pointer {
+
+        private val map = mapOf("name" to "vitar", "company" to "批批网")
+
+        private var pointer: Int
+        private var start: Int
+
+        constructor(pointer: Int, start: Int) {
+            this.pointer = pointer
+            this.start = start
+        }
     }
 
 }

@@ -55,6 +55,8 @@ class PPHtybridValue {
          */
         internal val mHttpParams: HashMap<String, String> = HashMap()
 
+        internal var mApiBean: PPJsonBody? = null
+
         /**
          * Returns the type from super class's type parameter in [ canonical form]
          */
@@ -79,6 +81,10 @@ class PPHtybridValue {
         fun method(method: Method): Param<T> {
             this.method = method
             return this
+        }
+
+        fun putRequestBean(apiBena: PPJsonBody) {
+            this.mApiBean = apiBena
         }
 
         fun put(paramMap: Map<String, String>): Param<T> {

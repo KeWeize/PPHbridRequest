@@ -3,7 +3,7 @@ package com.ppwang.pprequest.bean
 /**
  * 接口请求返回对象
  */
-class PPResult {
+internal class PPResult {
 
     var code: Int = -1
 
