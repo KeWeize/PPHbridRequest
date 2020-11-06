@@ -1,0 +1,3 @@
+rootProject.name='PPHybridRequest'
+include ':app'
+include ':pprequest'
