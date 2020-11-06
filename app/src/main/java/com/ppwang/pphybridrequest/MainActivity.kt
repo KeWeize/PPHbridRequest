@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.gson.reflect.TypeToken
+import com.ppwang.pphybridrequest.api.AdsEngineApi
+import com.ppwang.pphybridrequest.api.MainHomeApi
+import com.ppwang.pphybridrequest.api.core.Cmd
+import com.ppwang.pphybridrequest.api.core.JavaPath
 import com.ppwang.pphybridrequest.bean.BannerItem
 import com.ppwang.pprequest.core.PPHtybridValue
 import com.ppwang.pprequest.core.PPRequest
@@ -28,38 +31,27 @@ class MainActivity : AppCompatActivity() {
                 if (it.hasException()) {
                     Toast.makeText(this, "请求异常", Toast.LENGTH_SHORT).show()
                 }
-                val list: List<BannerItem>? =
-                    it.getData<ArrayList<BannerItem>>("ads_engine/banner/listBannerV1")
-
-                val list2: List<BannerItem>? =
-                    it.getData<ArrayList<BannerItem>>("50206")
+                val list: List<BannerItem>? = it.getData(JavaPath.ADS_BANNER_BANNERLIST)
+                val list2: List<BannerItem>? = it.getData(Cmd.CODE_50206)
 
                 Toast.makeText(
                     this,
-                    "请求回调成功: 首页Banner ${list?.size},  50206 ${list2?.size}",
+                    "请求回调成功: 首页Banner： ${list?.size},  50206： ${list2?.size}",
                     Toast.LENGTH_SHORT
                 ).show()
 
             })
     }
 
-    // 生成联合请求对象
+    /**
+     * 生成联合请求对象
+     */
     private fun createRequestParams(): PPHtybridValue {
         // 首页Banner数据
-        val javaParam = PPHtybridValue.JavaParam(
-            "ads_engine/banner/listBannerV1",
-            object : TypeToken<ArrayList<BannerItem>>() {}.type
-        )
-        javaParam.put("releaseType", "0")
-        javaParam.put("page", "1")
-
-        // cmd 50206
-        val phpParam = PPHtybridValue.PhpParam(
-            "50206",
-            object : TypeToken<ArrayList<BannerItem>>() {}.type
-        )
-
-        return PPHtybridValue(javaParam, phpParam)
+        val bannerParam = AdsEngineApi.createBannerList(0, 1)
+        // 豆腐块
+        val phpParam = MainHomeApi.createCmd50206()
+        return PPHtybridValue(bannerParam, phpParam)
     }
 
 }

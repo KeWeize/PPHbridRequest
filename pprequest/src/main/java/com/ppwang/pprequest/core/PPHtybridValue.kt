@@ -1,6 +1,8 @@
 package com.ppwang.pprequest.core
 
+import com.google.gson.internal.`$Gson$Types`
 import com.ppwang.pprequest.core.PPHtybridValue.*
+import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 /**
@@ -13,16 +15,16 @@ import java.lang.reflect.Type
  */
 class PPHtybridValue {
 
-    internal val mParamList: ArrayList<Param> = ArrayList(4)
+    internal val mParamList: ArrayList<Param<*>> = ArrayList(4)
 
-    constructor(vararg params: Param) {
+    constructor(vararg params: Param<*>) {
         mParamList.addAll(params)
     }
 
     /**
      * 添加请求信息
      */
-    fun addParam(param: Param) {
+    fun addParam(param: Param<*>) {
         if (mParamList.contains(param)) {
             return
         }
@@ -32,7 +34,16 @@ class PPHtybridValue {
     /**
      * 包装单个请求信息
      */
-    abstract class Param {
+    abstract class Param<T>() {
+
+        /**
+         * data 解析类型，通过泛型定义
+         */
+        internal var type: Type? = null
+
+        init {
+            type = getSuperclassTypeParameter(javaClass)
+        }
 
         /**
          * 请求方法，不覆盖默认GET请求
@@ -40,26 +51,21 @@ class PPHtybridValue {
         internal var method = Method.GET
 
         /**
-         * data 解析类型
-         */
-        internal var clazz: Class<*>? = null
-
-        /**
-         * data 解析类型，通常用于 List 携带泛型数据
-         */
-        internal var type: Type? = null
-
-        /**
          * 网络请求参数
          */
         internal val mHttpParams: HashMap<String, String> = HashMap()
 
-        constructor(clazz: Class<*>?) {
-            this.clazz = clazz
-        }
-
-        constructor(type: Type?) {
-            this.type = type
+        /**
+         * Returns the type from super class's type parameter in [ canonical form]
+         */
+        private fun getSuperclassTypeParameter(subclass: Class<*>): Type? {
+            val superclass = subclass.genericSuperclass
+            if (superclass is Class<*>) {
+                throw RuntimeException("Missing type parameter.")
+            }
+            val parameterized =
+                superclass as ParameterizedType?
+            return `$Gson$Types`.canonicalize(parameterized!!.actualTypeArguments[0])
         }
 
         /**
@@ -70,47 +76,47 @@ class PPHtybridValue {
         /**
          * 注入请求方法，目前支持 GET、POST。后续看业务需要新增
          */
-        fun method(method: Method): Param {
+        fun method(method: Method): Param<T> {
             this.method = method
             return this
         }
 
-        fun put(paramMap: Map<String, String>): Param {
+        fun put(paramMap: Map<String, String>): Param<T> {
             mHttpParams.putAll(paramMap)
             return this
         }
 
-        fun put(key: String, value: String): Param {
+        fun put(key: String, value: String): Param<T> {
             mHttpParams[key] = value
             return this
         }
 
-        fun put(key: String, value: Int): Param {
+        fun put(key: String, value: Int): Param<T> {
             mHttpParams[key] = value.toString()
             return this
         }
 
-        fun put(key: String, value: Long): Param {
+        fun put(key: String, value: Long): Param<T> {
             mHttpParams[key] = value.toString()
             return this
         }
 
-        fun put(key: String, value: Float): Param {
+        fun put(key: String, value: Float): Param<T> {
             mHttpParams[key] = value.toString()
             return this
         }
 
-        fun put(key: String, value: Double): Param {
+        fun put(key: String, value: Double): Param<T> {
             mHttpParams[key] = value.toString()
             return this
         }
 
-        fun put(key: String, value: Boolean): Param {
+        fun put(key: String, value: Boolean): Param<T> {
             mHttpParams[key] = value.toString()
             return this
         }
 
-        fun put(key: String, value: Char): Param {
+        fun put(key: String, value: Char): Param<T> {
             mHttpParams[key] = value.toString()
             return this
         }
@@ -119,18 +125,14 @@ class PPHtybridValue {
     /**
      * Java 接口请求信息类
      */
-    class JavaParam : Param {
+    class JavaParam<T> : Param<T> {
 
         /**
          * 请求路径，同时也作为Java接口请求的Tag使用
          */
         internal val path: String
 
-        constructor(path: String, clazz: Class<*>?) : super(clazz) {
-            this.path = path
-        }
-
-        constructor(path: String, type: Type?) : super(type) {
+        constructor(path: String) : super() {
             this.path = path
         }
 
@@ -141,18 +143,14 @@ class PPHtybridValue {
     /**
      * PHP 接口请求信息类
      */
-    class PhpParam : Param {
+    class PhpParam<T> : Param<T> {
 
         /**
          * php 请求 cmd，同时也作为 phpt 接口请求的Tag使用，用于缓存返回数据
          */
         internal val cmd: String
 
-        constructor(cmd: String, clazz: Class<*>?) : super(clazz) {
-            this.cmd = cmd
-        }
-
-        constructor(cmd: String, type: Type?) : super(type) {
+        constructor(cmd: String) : super() {
             this.cmd = cmd
         }
 

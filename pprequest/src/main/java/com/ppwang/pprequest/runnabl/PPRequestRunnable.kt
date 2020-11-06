@@ -114,7 +114,7 @@ internal class PPRequestRunnable : Runnable {
     /**
      * 发起Java接口请求
      */
-    private fun requestJavaApi(param: PPHtybridValue.JavaParam) {
+    private fun requestJavaApi(param: PPHtybridValue.JavaParam<*>) {
         val httpParams: HashMap<String, String> = param.mHttpParams
         // 当前接口请求执行回调
         val cellRequestListener = object : PPBaseOkGoCallback.OnCellRequestListener {
@@ -171,7 +171,7 @@ internal class PPRequestRunnable : Runnable {
     /**
      * 发起Php接口请求
      */
-    private fun requestPhpApi(param: PPHtybridValue.PhpParam) {
+    private fun requestPhpApi(param: PPHtybridValue.PhpParam<*>) {
         if (!param.mHttpParams.containsKey("cmd")) {
             param.mHttpParams["cmd"] = param.cmd
         }

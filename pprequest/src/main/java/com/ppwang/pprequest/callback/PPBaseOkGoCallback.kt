@@ -18,11 +18,11 @@ internal abstract class PPBaseOkGoCallback : StringCallback {
 
     private val mRequestListener: OnCellRequestListener
 
-    protected val mRequestParam: PPHtybridValue.Param
+    protected val mRequestParam: PPHtybridValue.Param<*>
 
     protected val mGson = Gson()
 
-    constructor(param: PPHtybridValue.Param, listener: OnCellRequestListener) : super() {
+    constructor(param: PPHtybridValue.Param<*>, listener: OnCellRequestListener) : super() {
         this.mRequestParam = param
         this.mRequestListener = listener
     }
