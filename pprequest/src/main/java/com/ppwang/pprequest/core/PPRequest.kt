@@ -1,7 +1,5 @@
 package com.ppwang.pprequest.core
 
-import android.os.Handler
-import android.os.Looper
 import com.ppwang.pprequest.bean.PPResponse
 import com.ppwang.pprequest.interfaces.IPPApiListener
 import com.ppwang.pprequest.runnabl.PPRequestRunnable
@@ -29,17 +27,12 @@ class PPRequest {
         /**
          * 最大线程数
          */
-        private const val MAXIMUM_POOL_SIZE = 20
+        private const val MAXIMUM_POOL_SIZE = Int.MAX_VALUE
 
         /**
          * 普通线程保活时间（秒）
          */
         private const val KEEP_ALIVE_SECONDS = 5L
-
-        /**
-         * 实例主线程Hanndler，切换响应回调到主线程执行
-         */
-        private val mMainThreadHandler = Handler(Looper.getMainLooper())
 
         /**
          * 网络请求共用线程池

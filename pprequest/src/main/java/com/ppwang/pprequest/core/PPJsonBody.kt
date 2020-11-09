@@ -9,6 +9,11 @@ import com.google.gson.Gson
  */
 abstract class PPJsonBody {
 
+    /**
+     * Php 请求需要额外添加 cmd 参数
+     */
+    internal var cmd: String? = null
+
     companion object {
         private val mGson = Gson()
     }
@@ -16,6 +21,6 @@ abstract class PPJsonBody {
     /**
      * 将自身转换为json字符串
      */
-    fun generateJson(): String = mGson.toJson(this)
+    internal fun generateJson(): String = mGson.toJson(this)
 
 }

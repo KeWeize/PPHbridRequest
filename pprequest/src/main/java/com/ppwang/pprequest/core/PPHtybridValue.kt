@@ -55,7 +55,7 @@ class PPHtybridValue {
          */
         internal val mHttpParams: HashMap<String, String> = HashMap()
 
-        internal var mApiBean: PPJsonBody? = null
+        internal var mJsonBean: PPJsonBody? = null
 
         /**
          * Returns the type from super class's type parameter in [ canonical form]
@@ -83,8 +83,8 @@ class PPHtybridValue {
             return this
         }
 
-        fun putRequestBean(apiBena: PPJsonBody) {
-            this.mApiBean = apiBena
+        open fun putRequestBean(apiBena: PPJsonBody) {
+            this.mJsonBean = apiBena
         }
 
         fun put(paramMap: Map<String, String>): Param<T> {
@@ -158,6 +158,11 @@ class PPHtybridValue {
 
         constructor(cmd: String) : super() {
             this.cmd = cmd
+        }
+
+        override fun putRequestBean(apiBena: PPJsonBody) {
+            super.putRequestBean(apiBena)
+            apiBena.cmd = this.cmd
         }
 
         override fun getTag(): String = cmd

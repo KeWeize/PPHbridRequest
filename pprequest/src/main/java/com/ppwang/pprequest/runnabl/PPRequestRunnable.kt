@@ -153,6 +153,9 @@ internal class PPRequestRunnable : Runnable {
         when (param.method) {
             // 发起 GET 请求
             PPHtybridValue.Method.GET -> {
+                if (param.mJsonBean != null) {
+                    throw IllegalArgumentException("Java请求不允许在GET方法下设置JsonBody请求参数")
+                }
                 OkGo.get<String>(apiUrl)
                     .tag(this)
                     .params(httpParams)
@@ -160,9 +163,18 @@ internal class PPRequestRunnable : Runnable {
             }
             // 发起 POST 请求
             PPHtybridValue.Method.POST -> {
+                var requestJson = ""
+                if (param.mJsonBean != null) {
+                    // 如果使用 JsonBody 请求体，则直接将参数对象转换为 json
+                    requestJson = param.mJsonBean!!.generateJson()
+                } else {
+                    // 使用普通参数集合，将普通参数集转为 json
+                    val httpParams: HashMap<*, *> = param.mHttpParams
+                    requestJson = mGson.toJson(listOf(httpParams))
+                }
                 OkGo.post<String>(apiUrl)
                     .tag(this)
-                    .upJson(JSONObject(httpParams as Map<*, *>))
+                    .upJson(requestJson)
                     .execute(PPJavaOkGoCallback(param, cellRequestListener))
             }
         }
@@ -175,8 +187,16 @@ internal class PPRequestRunnable : Runnable {
         if (!param.mHttpParams.containsKey("cmd")) {
             param.mHttpParams["cmd"] = param.cmd
         }
-        val httpParams: HashMap<String, *> = param.mHttpParams
-        val requestJson = mGson.toJson(listOf(httpParams))
+        // 生成请求参数 json 字符串
+        var requestJson = ""
+        if (param.mJsonBean != null) {
+            // 如果使用 JsonBody 请求体，则直接将参数对象转换为 json
+            requestJson = param.mJsonBean!!.generateJson()
+        } else {
+            // 使用普通参数集合，将普通参数集转为 json
+            val httpParams: HashMap<String, *> = param.mHttpParams
+            requestJson = mGson.toJson(listOf(httpParams))
+        }
         // 当前接口请求执行回调
         val cellRequestListener = object : PPBaseOkGoCallback.OnCellRequestListener {
             override fun onSuccess(result: PPResult) {

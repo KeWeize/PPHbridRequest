@@ -8,7 +8,5 @@ import com.google.gson.annotations.SerializedName;
  */
 public class BannerItem {
 
-    @SerializedName("id")
-    private String id;
 
 }

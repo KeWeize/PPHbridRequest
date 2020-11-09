@@ -6,49 +6,64 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ppwang.pphybridrequest.api.AdsEngineApi
-import com.ppwang.pphybridrequest.api.MainHomeApi
 import com.ppwang.pphybridrequest.api.core.Cmd
 import com.ppwang.pphybridrequest.api.core.JavaPath
 import com.ppwang.pphybridrequest.bean.BannerItem
-import com.ppwang.pprequest.core.PPJsonBody
 import com.ppwang.pprequest.core.PPHtybridValue
+import com.ppwang.pprequest.core.PPJsonBody
 import com.ppwang.pprequest.core.PPRequest
 import com.ppwang.pprequest.interfaces.IPPApiListener
 
 class MainActivity : AppCompatActivity() {
 
+    private val MAX_VALUE = 1
+    private var count = MAX_VALUE
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findViewById<View>(R.id.tv_request).setOnClickListener {
-            request()
+            count = MAX_VALUE
+            for (i in 1..count) {
+                request(i)
+            }
         }
     }
 
-    private fun request() {
+    private fun request(time: Int) {
         val params = createRequestParams()
         val request = PPRequest()
+        val star = System.currentTimeMillis()
         request.excute(params,
             IPPApiListener {
+                val end = System.currentTimeMillis()
                 if (it.hasException()) {
-                    Toast.makeText(this, "请求异常", Toast.LENGTH_SHORT).show()
+                    for (key in it.getExceptionMap()!!.keys) {
+                        val message = it.getExceptionMap()!![key]!!.getMessage()
+                        Log.d("MainActivity", "第$time 次请求异常， tag:$key, message:$message")
+                        break
+                    }
+                } else {
+                    Log.d("MainActivity", "第$time 次请求，耗时: ${end - star}ms")
                 }
                 val list: List<BannerItem>? = it.getData(JavaPath.ADS_BANNER_BANNERLIST)
                 val list2: List<BannerItem>? = it.getData(Cmd.CODE_50206)
 
-                Toast.makeText(
-                    this,
-                    "请求回调成功: 首页Banner： ${list?.size},  50206： ${list2?.size}",
-                    Toast.LENGTH_SHORT
-                ).show()
+//                Toast.makeText(
+//                    this,
+//                    "请求回调成功: 首页Banner： ${list?.size},  50206： ${list2?.size}",
+//                    Toast.LENGTH_SHORT
+//                ).show()
 
+                count -= 1
+                if (count == 0) {
+                    Log.d("MainActivity", "所有请求执行结束");
+                }
             }
         )
 
-
         val bean = BannerApiBean(5, 6)
         bean.setPointer(Pointer(50, 50))
-        Log.d("MainActivity", bean.generateJson())
 
     }
 
@@ -58,9 +73,11 @@ class MainActivity : AppCompatActivity() {
     private fun createRequestParams(): PPHtybridValue {
         // 首页Banner数据
         val bannerParam = AdsEngineApi.createBannerList(0, 1)
-        // 豆腐块
-        val phpParam = MainHomeApi.createCmd50206()
-        return PPHtybridValue(bannerParam, phpParam)
+        return PPHtybridValue(
+            bannerParam, createParam8(), createParam50206(), createParam1012(),
+            craeteParam1010(), createParam33000(), createParam21190(), createParam33(),
+            createParam11806()
+        )
     }
 
     /**
@@ -96,6 +113,58 @@ class MainActivity : AppCompatActivity() {
             this.pointer = pointer
             this.start = start
         }
+    }
+
+
+    /**test**/
+    /************************ 首页数据请求相关cmd start  */
+    /**
+     * 首页通透广告
+     */
+    private fun createParam8(): PPHtybridValue.PhpParam<*> {
+        val value = PPHtybridValue.PhpParam<ArrayList<BannerItem>>("8")
+        value.put("page", 1)
+        return value
+    }
+
+    private fun createParam50206(): PPHtybridValue.PhpParam<*> {
+        return PPHtybridValue.PhpParam<ArrayList<BannerItem>>("50206")
+    }
+
+    /**
+     * 首页浮窗广告
+     */
+    private fun createParam1012(): PPHtybridValue.PhpParam<*> {
+        return PPHtybridValue.PhpParam<ArrayList<BannerItem>>("1012")
+    }
+
+    private fun craeteParam1010(): PPHtybridValue.PhpParam<*> {
+        return PPHtybridValue.PhpParam<ArrayList<BannerItem>>("1010")
+    }
+
+    private fun createParam33000(): PPHtybridValue.PhpParam<*> {
+        val value = PPHtybridValue.PhpParam<ArrayList<BannerItem>>("33000")
+        value.put("positionId", 1)
+        return value
+    }
+
+    private fun createParam21190(): PPHtybridValue.PhpParam<*> {
+        val value = PPHtybridValue.PhpParam<ArrayList<BannerItem>>("21190")
+        value.put("order_by", 1)
+        return value
+    }
+
+    /**
+     * 获取首页背景图配置
+     */
+    private fun createParam33(): PPHtybridValue.PhpParam<*> {
+        val value = PPHtybridValue.PhpParam<BannerItem>("33")
+        return value
+    }
+
+    private fun createParam11806(): PPHtybridValue.PhpParam<*> {
+        val value = PPHtybridValue.PhpParam<ArrayList<BannerItem>>("11806")
+        return value
     }
 
 }

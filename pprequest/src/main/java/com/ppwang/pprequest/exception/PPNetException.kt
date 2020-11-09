@@ -53,7 +53,12 @@ open class PPNetException {
     /**
      * 未知错误
      */
-    class PPUnknowException : PPNetException(CODE_UNKNOW_EXCEPTION, MESSAGE_JSON_PARSE_EXCEPTION)
+    class PPUnknowException : PPNetException {
+
+        constructor() : this(CODE_UNKNOW_EXCEPTION, MESSAGE_UNKNOW_EXCEPTION)
+
+        constructor(code: Int, message: String) : super(code, message)
+    }
 
     /**
      * 网络请求错误

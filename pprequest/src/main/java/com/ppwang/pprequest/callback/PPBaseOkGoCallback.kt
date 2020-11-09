@@ -77,7 +77,7 @@ internal abstract class PPBaseOkGoCallback : StringCallback {
             }
             else -> {
                 // 未知异常
-                mRequestListener.onFail(PPNetException.PPUnknowException())
+                mRequestListener.onFail(PPNetException.PPUnknowException(code, message))
             }
         }
     }
