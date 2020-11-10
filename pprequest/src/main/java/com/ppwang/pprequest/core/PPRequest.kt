@@ -53,7 +53,7 @@ class PPRequest {
     /**
      * 执行请求逻辑
      */
-    fun excute(params: PPHtybridValue, listener: IPPApiListener) {
+    fun excute(params: PPParamSet, listener: IPPApiListener) {
 
         val task = PPRequestRunnable(params)
         task.setOnHtybridRequestListener(object :

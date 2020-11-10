@@ -6,7 +6,7 @@ import com.google.gson.JsonParseException
 import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.Response
 import com.ppwang.pprequest.bean.PPResult
-import com.ppwang.pprequest.core.PPHtybridValue
+import com.ppwang.pprequest.core.PPParamSet
 import com.ppwang.pprequest.exception.PPNetException
 import org.json.JSONException
 
@@ -18,11 +18,11 @@ internal abstract class PPBaseOkGoCallback : StringCallback {
 
     private val mRequestListener: OnCellRequestListener
 
-    protected val mRequestParam: PPHtybridValue.Param<*>
+    protected val mRequestParam: PPParamSet.Param<*>
 
     protected val mGson = Gson()
 
-    constructor(param: PPHtybridValue.Param<*>, listener: OnCellRequestListener) : super() {
+    constructor(param: PPParamSet.Param<*>, listener: OnCellRequestListener) : super() {
         this.mRequestParam = param
         this.mRequestListener = listener
     }

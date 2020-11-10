@@ -10,10 +10,9 @@ import com.ppwang.pprequest.callback.PPBaseOkGoCallback
 import com.ppwang.pprequest.callback.PPJavaOkGoCallback
 import com.ppwang.pprequest.callback.PPPhpOkGoCallback
 import com.ppwang.pprequest.constact.PPApiUrlConfig
-import com.ppwang.pprequest.core.PPHtybridValue
+import com.ppwang.pprequest.core.PPParamSet
 import com.ppwang.pprequest.exception.PPNetException
 import com.ppwang.pprequest.utils.SignUtils
-import org.json.JSONObject
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -23,7 +22,7 @@ import java.util.concurrent.TimeUnit
  * @author: vitar
  * @date:   2020/10/30
  *
- * 执行联合请求任务，根据 [PPHtybridValue] 对象遍历发起多个异步请求
+ * 执行联合请求任务，根据 [PPParamSet] 对象遍历发起多个异步请求
  */
 internal class PPRequestRunnable : Runnable {
 
@@ -34,7 +33,7 @@ internal class PPRequestRunnable : Runnable {
     /**
      * 联合请求信息集
      */
-    private val mHtybridValue: PPHtybridValue
+    private val mHtybridValue: PPParamSet
 
     /**
      * 当前联合请求任务返回数据封装对象
@@ -61,7 +60,7 @@ internal class PPRequestRunnable : Runnable {
      */
     private var mStatus: STATUS = STATUS.RUNNING
 
-    constructor(htybridValue: PPHtybridValue) {
+    constructor(htybridValue: PPParamSet) {
         this.mHtybridValue = htybridValue
         mLatch = CountDownLatch(mHtybridValue.mParamList.size)
     }
@@ -76,11 +75,11 @@ internal class PPRequestRunnable : Runnable {
     override fun run() {
         mStatus = STATUS.RUNNING
         for (value in mHtybridValue.mParamList) {
-            if (value is PPHtybridValue.JavaParam) {
+            if (value is PPParamSet.JavaParam) {
                 // 发起 Java 请求
                 requestJavaApi(value)
             }
-            if (value is PPHtybridValue.PhpParam) {
+            if (value is PPParamSet.PhpParam) {
                 // 发起 PHP 请求
                 requestPhpApi(value)
             }
@@ -114,7 +113,7 @@ internal class PPRequestRunnable : Runnable {
     /**
      * 发起Java接口请求
      */
-    private fun requestJavaApi(param: PPHtybridValue.JavaParam<*>) {
+    private fun requestJavaApi(param: PPParamSet.JavaParam<*>) {
         val httpParams: HashMap<String, String> = param.mHttpParams
         // 当前接口请求执行回调
         val cellRequestListener = object : PPBaseOkGoCallback.OnCellRequestListener {
@@ -152,7 +151,7 @@ internal class PPRequestRunnable : Runnable {
         val apiUrl = apiUrlSb.toString()
         when (param.method) {
             // 发起 GET 请求
-            PPHtybridValue.Method.GET -> {
+            PPParamSet.Method.GET -> {
                 if (param.mJsonBean != null) {
                     throw IllegalArgumentException("Java请求不允许在GET方法下设置JsonBody请求参数")
                 }
@@ -162,7 +161,7 @@ internal class PPRequestRunnable : Runnable {
                     .execute(PPJavaOkGoCallback(param, cellRequestListener))
             }
             // 发起 POST 请求
-            PPHtybridValue.Method.POST -> {
+            PPParamSet.Method.POST -> {
                 var requestJson = ""
                 if (param.mJsonBean != null) {
                     // 如果使用 JsonBody 请求体，则直接将参数对象转换为 json
@@ -183,7 +182,7 @@ internal class PPRequestRunnable : Runnable {
     /**
      * 发起Php接口请求
      */
-    private fun requestPhpApi(param: PPHtybridValue.PhpParam<*>) {
+    private fun requestPhpApi(param: PPParamSet.PhpParam<*>) {
         if (!param.mHttpParams.containsKey("cmd")) {
             param.mHttpParams["cmd"] = param.cmd
         }
@@ -212,13 +211,13 @@ internal class PPRequestRunnable : Runnable {
         val url = PPApiUrlConfig.HOST_PHP + "index.php?c=goods"
         when (param.method) {
             // 执行 GET 请求
-            PPHtybridValue.Method.GET -> {
+            PPParamSet.Method.GET -> {
                 OkGo.get<String>(url)
                     .tag(this)
                     .params("json", requestJson)
                     .execute(PPPhpOkGoCallback(param, cellRequestListener))
             }
-            PPHtybridValue.Method.POST -> {
+            PPParamSet.Method.POST -> {
                 OkGo.post<String>(url)
                     .tag(this)
                     .params("json", requestJson)

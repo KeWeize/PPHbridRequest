@@ -10,7 +10,7 @@ import com.ppwang.pprequest.exception.PPNetException
  */
 class PPResponse {
 
-    private var mErrorData: HashMap<String, Any>? = null
+//    private var mErrorData: HashMap<String, PPNetException>? = null
 
     /**
      * 用于存储联合请求响应数据
@@ -93,27 +93,45 @@ class PPResponse {
     }
 
     /**
-     * 是否存在请求异常
+     * 联合请求是否存在异常
      */
-    fun hasError(): Boolean {
-        return mErrorData != null && mErrorData!!.size > 0
+    fun hasException(): Boolean {
+        return mExceptionData != null && mExceptionData!!.size > 0
     }
 
     /**
      * 获取请求异常信息
      */
     fun getErrorException(tag: String): PPNetException? {
-        if (mErrorData == null || !mErrorData!!.containsKey(tag)) {
+        if (mExceptionData == null || !mExceptionData!!.containsKey(tag)) {
             return null
         }
         return mResponseData!![tag] as PPNetException
     }
 
     /**
-     * 联合请求是否存在异常
+     * 获取整个请求异常错误集
      */
-    fun hasException(): Boolean = mExceptionData != null && mExceptionData!!.size > 0
-
     fun getExceptionMap(): HashMap<String, PPNetException>? = mExceptionData
+
+    /**
+     * 获取第一个异常数据
+     */
+    fun getHeadException(): PPNetException? {
+        if (mExceptionData != null || mExceptionData!!.size > 0) {
+            for (key in mExceptionData!!.keys) {
+                return mExceptionData!![key]
+            }
+        }
+        return null
+    }
+
+    /**
+     * 获取第一个异常文本内容
+     */
+    fun getHeadExceptionMsg(): String? {
+        val exception = getHeadException()
+        return exception?.getMessage()
+    }
 
 }

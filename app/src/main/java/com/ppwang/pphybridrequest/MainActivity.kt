@@ -3,13 +3,13 @@ package com.ppwang.pphybridrequest
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
 import com.ppwang.pphybridrequest.api.AdsEngineApi
 import com.ppwang.pphybridrequest.api.core.Cmd
 import com.ppwang.pphybridrequest.api.core.JavaPath
 import com.ppwang.pphybridrequest.bean.BannerItem
-import com.ppwang.pprequest.core.PPHtybridValue
+import com.ppwang.pprequest.core.PPParamSet
 import com.ppwang.pprequest.core.PPJsonBody
 import com.ppwang.pprequest.core.PPRequest
 import com.ppwang.pprequest.interfaces.IPPApiListener
@@ -70,10 +70,10 @@ class MainActivity : AppCompatActivity() {
     /**
      * 生成联合请求对象
      */
-    private fun createRequestParams(): PPHtybridValue {
+    private fun createRequestParams(): PPParamSet {
         // 首页Banner数据
         val bannerParam = AdsEngineApi.createBannerList(0, 1)
-        return PPHtybridValue(
+        return PPParamSet(
             bannerParam, createParam8(), createParam50206(), createParam1012(),
             craeteParam1010(), createParam33000(), createParam21190(), createParam33(),
             createParam11806()
@@ -121,35 +121,35 @@ class MainActivity : AppCompatActivity() {
     /**
      * 首页通透广告
      */
-    private fun createParam8(): PPHtybridValue.PhpParam<*> {
-        val value = PPHtybridValue.PhpParam<ArrayList<BannerItem>>("8")
+    private fun createParam8(): PPParamSet.PhpParam<*> {
+        val value = PPParamSet.PhpParam<ArrayList<BannerItem>>("8")
         value.put("page", 1)
         return value
     }
 
-    private fun createParam50206(): PPHtybridValue.PhpParam<*> {
-        return PPHtybridValue.PhpParam<ArrayList<BannerItem>>("50206")
+    private fun createParam50206(): PPParamSet.PhpParam<*> {
+        return PPParamSet.PhpParam<ArrayList<BannerItem>>("50206")
     }
 
     /**
      * 首页浮窗广告
      */
-    private fun createParam1012(): PPHtybridValue.PhpParam<*> {
-        return PPHtybridValue.PhpParam<ArrayList<BannerItem>>("1012")
+    private fun createParam1012(): PPParamSet.PhpParam<*> {
+        return PPParamSet.PhpParam<ArrayList<BannerItem>>("1012")
     }
 
-    private fun craeteParam1010(): PPHtybridValue.PhpParam<*> {
-        return PPHtybridValue.PhpParam<ArrayList<BannerItem>>("1010")
+    private fun craeteParam1010(): PPParamSet.PhpParam<*> {
+        return PPParamSet.PhpParam<ArrayList<BannerItem>>("1010")
     }
 
-    private fun createParam33000(): PPHtybridValue.PhpParam<*> {
-        val value = PPHtybridValue.PhpParam<ArrayList<BannerItem>>("33000")
+    private fun createParam33000(): PPParamSet.PhpParam<*> {
+        val value = PPParamSet.PhpParam<ArrayList<BannerItem>>("33000")
         value.put("positionId", 1)
         return value
     }
 
-    private fun createParam21190(): PPHtybridValue.PhpParam<*> {
-        val value = PPHtybridValue.PhpParam<ArrayList<BannerItem>>("21190")
+    private fun createParam21190(): PPParamSet.PhpParam<*> {
+        val value = PPParamSet.PhpParam<ArrayList<BannerItem>>("21190")
         value.put("order_by", 1)
         return value
     }
@@ -157,13 +157,13 @@ class MainActivity : AppCompatActivity() {
     /**
      * 获取首页背景图配置
      */
-    private fun createParam33(): PPHtybridValue.PhpParam<*> {
-        val value = PPHtybridValue.PhpParam<BannerItem>("33")
+    private fun createParam33(): PPParamSet.PhpParam<*> {
+        val value = PPParamSet.PhpParam<BannerItem>("33")
         return value
     }
 
-    private fun createParam11806(): PPHtybridValue.PhpParam<*> {
-        val value = PPHtybridValue.PhpParam<ArrayList<BannerItem>>("11806")
+    private fun createParam11806(): PPParamSet.PhpParam<*> {
+        val value = PPParamSet.PhpParam<ArrayList<BannerItem>>("11806")
         return value
     }
 

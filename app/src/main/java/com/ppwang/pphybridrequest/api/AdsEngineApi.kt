@@ -1,9 +1,8 @@
 package com.ppwang.pphybridrequest.api
 
-import com.ppwang.pphybridrequest.api.core.Cmd
 import com.ppwang.pphybridrequest.api.core.JavaPath
 import com.ppwang.pphybridrequest.bean.BannerItem
-import com.ppwang.pprequest.core.PPHtybridValue
+import com.ppwang.pprequest.core.PPParamSet
 
 
 /**
@@ -17,8 +16,8 @@ object AdsEngineApi {
     /**
      * 请求广告
      */
-    fun createBannerList(releaseType: Int, page: Int): PPHtybridValue.Param<*> {
-        val param = PPHtybridValue.JavaParam<ArrayList<BannerItem>>(JavaPath.ADS_BANNER_BANNERLIST)
+    fun createBannerList(releaseType: Int, page: Int): PPParamSet.Param<*> {
+        val param = PPParamSet.JavaParam<ArrayList<BannerItem>>(JavaPath.ADS_BANNER_BANNERLIST)
         param.put("releaseType", releaseType)
         param.put("page", page)
         return param;

@@ -1,9 +1,12 @@
 package com.ppwang.pprequest.core
 
 import com.google.gson.internal.`$Gson$Types`
-import com.ppwang.pprequest.core.PPHtybridValue.*
+import com.google.gson.reflect.TypeToken
+import com.ppwang.pprequest.assist.TypeAssistClazz
+import com.ppwang.pprequest.core.PPParamSet.*
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+
 
 /**
  * @author: vitar
@@ -13,7 +16,7 @@ import java.lang.reflect.Type
  * 1. Java 接口请求 [JavaParam]
  * 2. PHP 接口请求 [PhpParam]
  */
-class PPHtybridValue {
+class PPParamSet {
 
     internal val mParamList: ArrayList<Param<*>> = ArrayList(4)
 
@@ -42,7 +45,8 @@ class PPHtybridValue {
         internal var type: Type? = null
 
         init {
-            type = getSuperclassTypeParameter(javaClass)
+//            type = getSuperclassTypeParameter(javaClass)
+            type = object: TypeAssistClazz<T>(){}
         }
 
         /**
@@ -58,16 +62,16 @@ class PPHtybridValue {
         internal var mJsonBean: PPJsonBody? = null
 
         /**
-         * Returns the type from super class's type parameter in [ canonical form]
+         * Returns the class from super class's type parameter in [ canonical form]
          */
-        private fun getSuperclassTypeParameter(subclass: Class<*>): Type? {
-            val superclass = subclass.genericSuperclass
+        private fun getSuperclassTypeParameter(subclass: Class<*>): Type {
+            val superclass: Type? = subclass.genericSuperclass
             if (superclass is Class<*>) {
                 throw RuntimeException("Missing type parameter.")
             }
             val parameterized =
-                superclass as ParameterizedType?
-            return `$Gson$Types`.canonicalize(parameterized!!.actualTypeArguments[0])
+                superclass as ParameterizedType
+            return `$Gson$Types`.canonicalize(parameterized.actualTypeArguments[0])
         }
 
         /**

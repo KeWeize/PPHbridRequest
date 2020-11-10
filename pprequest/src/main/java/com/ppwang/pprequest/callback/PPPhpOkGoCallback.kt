@@ -1,7 +1,7 @@
 package com.ppwang.pprequest.callback
 
 import com.ppwang.pprequest.bean.PPResult
-import com.ppwang.pprequest.core.PPHtybridValue
+import com.ppwang.pprequest.core.PPParamSet
 import com.ppwang.pprequest.exception.PPNetException
 import org.json.JSONObject
 
@@ -30,7 +30,7 @@ internal class PPPhpOkGoCallback : PPBaseOkGoCallback {
         private const val KEY_DATA = "data"
     }
 
-    constructor(param: PPHtybridValue.Param<*>, listener: OnCellRequestListener) : super(
+    constructor(param: PPParamSet.Param<*>, listener: OnCellRequestListener) : super(
         param,
         listener
     )

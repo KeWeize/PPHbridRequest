@@ -1,8 +1,7 @@
 package com.ppwang.pprequest.callback
 
 import com.ppwang.pprequest.bean.PPResult
-import com.ppwang.pprequest.core.PPHtybridValue
-import org.json.JSONException
+import com.ppwang.pprequest.core.PPParamSet
 import org.json.JSONObject
 
 
@@ -31,7 +30,7 @@ internal class PPJavaOkGoCallback : PPBaseOkGoCallback {
     }
 
     constructor(
-        param: PPHtybridValue.Param<*>,
+        param: PPParamSet.Param<*>,
         listener: OnCellRequestListener
     ) : super(param, listener)
 
